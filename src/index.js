@@ -1,9 +1,10 @@
 import os from 'os';
 import path from 'path';
+import { goToUpDir, goToDir } from './nav.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-let dirCur = os.homedir();
+export let dirCur = os.homedir();
 let username = '';
 
 const parseArgs = () => {
@@ -25,12 +26,30 @@ process.on('SIGINT', function () {
 
 const dataInput = (chunk) => {
   const chunkStringified = chunk.toString().trim();
-  switch (chunkStringified) {
+  const commands = chunkStringified.split(' ');
+  if (commands.length) {
+    const args = commands.slice(1).join(' ');
+    if (args.includes('"')) {
+      commands[1] = args.split('"')[1];
+    }
+  }
+  switch (commands[0]) {
     case 'up':
-      goToUpDir();
+      dirCur = goToUpDir(dirCur);
+      showDirCur();
+      break;
+    case 'cd':
+      goToDir(dirCur, commands[1])
+        .then(res => {
+          dirCur = res;
+          showDirCur();
+        });
       break;
     case '.exit':
       process.exit();
+    default:
+      showInvalidInput();
+      showDirCur();
   }
 };
 
@@ -40,14 +59,9 @@ function showDirCur() {
   console.log(`You are currently in ${dirCur}`)
 }
 
-function goToUpDir() {
-  let dirCurArr = dirCur.split(path.sep);
-  if (dirCurArr.length > 1) {
-    dirCurArr = dirCurArr.slice(0, -1);
-    dirCur = dirCurArr.join(path.sep);
-  }
-  showDirCur();
-} 
+export function showInvalidInput() {
+  console.log('Invalid input');
+}
 
 parseArgs();
 showDirCur();
