@@ -1,6 +1,6 @@
 import os from 'os';
 import path from 'path';
-import { goToUpDir, goToDir } from './nav.js';
+import { goToUpDir, goToDir, readDir } from './nav.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +42,12 @@ const dataInput = (chunk) => {
       goToDir(dirCur, commands[1])
         .then(res => {
           dirCur = res;
+          showDirCur();
+        });
+      break;
+    case 'ls':
+      readDir(dirCur)
+        .then(() => {
           showDirCur();
         });
       break;

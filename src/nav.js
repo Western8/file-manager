@@ -32,4 +32,50 @@ export async function goToDir(dirCur, dirNext) {
     showInvalidInput();
   }
   return dirCur;
-} 
+}
+
+export async function readDir(dirCur) {
+  let files = [];
+  try {
+    files = await fs.readdir(dirCur, {
+      withFileTypes: true
+    });
+  } catch (err) {
+    console.log(err.message);
+    console.log('Operation failed');
+  }
+
+  files.sort((a, b) => {
+    if (a.isFile() && !b.isFile()) {
+      return 1;
+    } else if (!a.isFile() && b.isFile()) {
+      return -1;
+    };
+    if (a.name > b.name) {
+      return 1;
+    } else if (a.name < b.name) {
+      return -1;
+    }
+    return 0;
+  })
+/*
+  files.forEach((item) => {
+    console.log(item.name);
+    console.log('item.isDirectory() ', item.isDirectory());
+    console.log('item.isFile() ', item.isFile());
+    console.log('item.isBlockDevice() ', item.isBlockDevice());
+    console.log('item.isCharacterDevice() ', item.isCharacterDevice());
+    console.log('item.isFIFO() ', item.isFIFO());
+    console.log('item.isSocket() ', item.isSocket());
+    console.log('item.isSymbolicLink() ', item.isSymbolicLink());   
+    console.log(' '); 
+  });
+*/
+  const filesTable = files.map((item, index) => {
+    return {
+      Name: item.name,
+      Type: item.isFile() ? 'file' : 'directory',
+    }
+  });
+  console.table(filesTable);
+}
