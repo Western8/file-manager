@@ -2,6 +2,7 @@ import os from 'os';
 import path from 'path';
 import { goToUpDir, goToDir, readDir } from './nav.js';
 import { readFile, createFile, renameFile, copyFile, moveFile, removeFile } from './files.js';
+import { getEOL, getCpu, getHomedir, getUsername, getArch } from './os.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -156,6 +157,29 @@ const dataInput = (chunk) => {
         .finally(() => {
           showDirCur();
         })
+      break;
+
+    case 'os':
+      switch (commands[1]) {
+        case '--EOL':
+          getEOL();
+          break;
+        case '--cpus':
+          getCpu();
+          break;
+        case '--homedir':
+          getHomedir();
+          break;
+        case '--username':
+          getUsername();
+          break;
+        case '--architecture':
+          getArch();
+          break;
+        default:
+          showInvalidInput();
+      }
+      showDirCur();
       break;
 
     case '.exit':
