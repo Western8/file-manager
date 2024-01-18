@@ -1,7 +1,7 @@
 import os from 'os';
 import path from 'path';
 import { goToUpDir, goToDir, readDir } from './nav.js';
-import { readFile, createFile } from './files.js';
+import { readFile, createFile, renameFile } from './files.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,11 +30,25 @@ const dataInput = (chunk) => {
   const chunkStringified = chunk.toString().trim();
   const commands = chunkStringified.split(' ');
   if (commands.length) {
-    const args = commands.slice(1).join(' ');
-    if (args.includes('"')) {
+    let args = commands.slice(1).join(' ');
+    if (args[0] === '"' ) {
       commands[1] = args.split('"')[1];
+      args = args.split('"').slice(2).join('"').trim();
+      if (args[0] === '"' ) {
+        commands[2] = args.split('"')[1];
+      } else {
+        commands[2] = args.split(' ')[0];
+      }
+    } else {
+      args = commands.slice(2).join(' ').trim();
+      if (args[0] === '"' ) {
+        commands[2] = args.split('"')[1];
+      } else {
+        commands[2] = args.split(' ')[0];
+      }
     }
   }
+  
   switch (commands[0]) {
     case 'up':
       dirCur = goToUpDir(dirCur);
@@ -87,11 +101,11 @@ const dataInput = (chunk) => {
           showDirCur();
         })
       break;
-/*
+
       case 'rn':
-        renameFile(dirCur, commands[1])
+        renameFile(dirCur, commands[1], commands[2])
           .then(() => {
-            console.log('File has created successfully');
+            console.log('File has renamed successfully');
           })
           .catch(err => {
             console.log(err.message);
@@ -101,7 +115,7 @@ const dataInput = (chunk) => {
             showDirCur();
           })
         break;
-*/
+
     case '.exit':
       process.exit();
 

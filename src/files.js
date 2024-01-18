@@ -26,7 +26,7 @@ export async function readFile(dirCur, pathFile) {
 
 export async function createFile(dirCur, pathFile) {
   if (path.isAbsolute(pathFile)) {
-    throw 'Incorrect file name!';
+    throw new Error('Incorrect file name');
   }
   pathFile = path.resolve(dirCur, pathFile);
   let fileExist = false;
@@ -39,4 +39,32 @@ export async function createFile(dirCur, pathFile) {
     throw new Error('File already exists!');
   };
   await fsPromises.writeFile(pathFile, '');
+};
+
+export async function renameFile(dirCur, pathSrc, pathDst) {
+  if ((pathSrc === undefined) || (pathDst === undefined)) {
+    throw new Error('Invalid input');
+  }
+  if (path.isAbsolute(pathSrc) || path.isAbsolute(pathDst)) {
+    throw new Error('Incorrect file name');
+  }
+
+  pathSrc = path.resolve(dirCur, pathSrc);
+  pathDst = path.resolve(dirCur, pathDst);
+
+  try {
+    await fsPromises.access(pathSrc);
+  } catch (err) {
+    throw new Error('File doesn\'t exist!');
+  }
+  let pathDstExist = false;
+  try {
+    await fsPromises.access(pathDst);
+    pathDstExist = true;
+  } catch (err) {
+  }
+  if (pathDstExist) {
+    throw new Error('File already exists!');
+  };
+  await fsPromises.rename(pathSrc, pathDst)
 };
