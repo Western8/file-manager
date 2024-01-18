@@ -1,7 +1,7 @@
 import os from 'os';
 import path from 'path';
 import { goToUpDir, goToDir, readDir } from './nav.js';
-import { readFile } from './files.js';
+import { readFile, createFile } from './files.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,6 +74,34 @@ const dataInput = (chunk) => {
         })
       break;
 
+    case 'add':
+      createFile(dirCur, commands[1])
+        .then(() => {
+          console.log('File has created successfully');
+        })
+        .catch(err => {
+          console.log(err.message);
+          console.log('Operation failed');
+        })
+        .finally( () => {
+          showDirCur();
+        })
+      break;
+/*
+      case 'rn':
+        renameFile(dirCur, commands[1])
+          .then(() => {
+            console.log('File has created successfully');
+          })
+          .catch(err => {
+            console.log(err.message);
+            console.log('Operation failed');
+          })
+          .finally( () => {
+            showDirCur();
+          })
+        break;
+*/
     case '.exit':
       process.exit();
 
