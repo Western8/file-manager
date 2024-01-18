@@ -68,3 +68,26 @@ export async function renameFile(dirCur, pathSrc, pathDst) {
   };
   await fsPromises.rename(pathSrc, pathDst)
 };
+
+export async function copyFile(dirCur, pathSrc, dirDst) {
+  if (!path.isAbsolute(pathSrc)) {
+    pathSrc = path.resolve(dirCur, pathSrc);
+  }
+
+  let stat = await fsPromises.stat(pathSrc);
+  if (!stat.isFile()) {
+    throw new Error('Incorrect file name!');
+  }
+
+  stat = await fsPromises.stat(dirDst);
+  if (!stat.isDirectory()) {
+    throw new Error('Incorrect directory name!');
+  }
+
+  const fileName = path.basename(pathSrc);
+  const pathDst = path.resolve(dirDst, fileName);
+  const readableStream = await fs.createReadStream(pathSrc);
+  const writableStram = fs.createWriteStream(pathDst)
+
+  await readableStream.pipe(writableStram);
+};
