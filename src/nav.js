@@ -58,19 +58,7 @@ export async function readDir(dirCur) {
     }
     return 0;
   })
-/*
-  files.forEach((item) => {
-    console.log(item.name);
-    console.log('item.isDirectory() ', item.isDirectory());
-    console.log('item.isFile() ', item.isFile());
-    console.log('item.isBlockDevice() ', item.isBlockDevice());
-    console.log('item.isCharacterDevice() ', item.isCharacterDevice());
-    console.log('item.isFIFO() ', item.isFIFO());
-    console.log('item.isSocket() ', item.isSocket());
-    console.log('item.isSymbolicLink() ', item.isSymbolicLink());   
-    console.log(' '); 
-  });
-*/
+
   const filesTable = files.map((item, index) => {
     return {
       Name: item.name,
