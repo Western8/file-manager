@@ -1,7 +1,7 @@
 import os from 'os';
 import path from 'path';
 import { goToUpDir, goToDir, readDir } from './nav.js';
-import { readFile, createFile, renameFile, copyFile, moveFile } from './files.js';
+import { readFile, createFile, renameFile, copyFile, moveFile, removeFile } from './files.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -134,6 +134,20 @@ const dataInput = (chunk) => {
       moveFile(dirCur, commands[1], commands[2])
         .then(() => {
           console.log('File moved successfully');
+        })
+        .catch(err => {
+          console.log(err.message);
+          console.log('Operation failed');
+        })
+        .finally(() => {
+          showDirCur();
+        })
+      break;
+
+    case 'rm':
+      removeFile(dirCur, commands[1])
+        .then(() => {
+          console.log('File removed successfully');
         })
         .catch(err => {
           console.log(err.message);

@@ -129,3 +129,10 @@ export async function moveFile(dirCur, pathSrc, dirDst) {
     });
   })
 };
+
+export async function removeFile(dirCur, pathSrc) {
+  if (!path.isAbsolute(pathSrc)) {
+    pathSrc = path.resolve(dirCur, pathSrc);
+  }
+  await fsPromises.rm(pathSrc);
+};
