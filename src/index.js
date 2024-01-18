@@ -1,10 +1,12 @@
 import os from 'os';
 import path from 'path';
 import { goToUpDir, goToDir, readDir } from './nav.js';
+import { readFile } from './files.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-export let dirCur = os.homedir();
+let dirCur = os.homedir();
+dirCur = 'C:\\Text\\RS\\';
 let username = '';
 
 const parseArgs = () => {
@@ -38,6 +40,7 @@ const dataInput = (chunk) => {
       dirCur = goToUpDir(dirCur);
       showDirCur();
       break;
+
     case 'cd':
       goToDir(dirCur, commands[1])
         .then(res => {
@@ -45,14 +48,35 @@ const dataInput = (chunk) => {
           showDirCur();
         });
       break;
+
     case 'ls':
       readDir(dirCur)
-        .then(() => {
+        .then(() => {})
+        .catch(err => {
+          console.log(err.message);
+          console.log('Operation failed');
+        })
+        .finally( () => {
           showDirCur();
-        });
+        })
       break;
+
+    case 'cat':
+      readFile(dirCur, commands[1])
+        .then(() => {})
+        .catch(err => {
+          console.log(err.message);
+          console.log('Operation failed');
+        })
+        .finally( () => {
+          console.log('');
+          showDirCur();
+        })
+      break;
+
     case '.exit':
       process.exit();
+
     default:
       showInvalidInput();
       showDirCur();

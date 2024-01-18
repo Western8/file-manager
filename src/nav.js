@@ -42,7 +42,7 @@ export async function readDir(dirCur) {
     });
   } catch (err) {
     console.log(err.message);
-    console.log('Operation failed');
+    console.log(cat);
   }
 
   files.sort((a, b) => {
