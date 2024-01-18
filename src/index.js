@@ -3,6 +3,7 @@ import path from 'path';
 import { goToUpDir, goToDir, readDir } from './nav.js';
 import { readFile, createFile, renameFile, copyFile, moveFile, removeFile } from './files.js';
 import { getEOL, getCpu, getHomedir, getUsername, getArch } from './os.js';
+import { hashFile } from './hash.js';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -180,6 +181,19 @@ const dataInput = (chunk) => {
           showInvalidInput();
       }
       showDirCur();
+      break;
+
+    case 'hash':
+      hashFile(dirCur, commands[1])
+        .then(() => { })
+        .catch(err => {
+          console.log(err.message);
+          console.log('Operation failed');
+        })
+        .finally(() => {
+          //console.log('');
+          showDirCur();
+        })
       break;
 
     case '.exit':
