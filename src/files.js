@@ -79,6 +79,10 @@ export async function copyFile(dirCur, pathSrc, dirDst) {
     throw new Error('Incorrect file name!');
   }
 
+  if (!path.isAbsolute(dirDst)) {
+    dirDst = path.resolve(dirCur, dirDst);
+  }
+
   stat = await fsPromises.stat(dirDst);
   if (!stat.isDirectory()) {
     throw new Error('Incorrect directory name!');
@@ -100,6 +104,10 @@ export async function moveFile(dirCur, pathSrc, dirDst) {
   let stat = await fsPromises.stat(pathSrc);
   if (!stat.isFile()) {
     throw new Error('Incorrect file name!');
+  }
+
+  if (!path.isAbsolute(dirDst)) {
+    dirDst = path.resolve(dirCur, dirDst);
   }
 
   stat = await fsPromises.stat(dirDst);
