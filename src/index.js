@@ -1,24 +1,12 @@
 import os from 'os';
-import path from 'path';
+import { parseArgs, parseCommands } from './parse.js';
 import { goToUpDir, goToDir, readDir } from './nav.js';
 import { readFile, createFile, renameFile, copyFile, moveFile, removeFile } from './files.js';
 import { getEOL, getCpu, getHomedir, getUsername, getArch } from './os.js';
 import { hashFile } from './hash.js';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { compressFile, decompressFile } from './zip.js';
+export let username = 'Anonymous';
 let dirCur = os.homedir();
-dirCur = 'C:\\Text\\RS\\';
-let username = '';
-
-const parseArgs = () => {
-  const argv = Array.from(process.argv).slice(2);
-  const argUsername = argv.find(item => item.split('=')[0] === '--username');
-  if (argUsername) {
-    username = argUsername.split('=')[1];
-  }
-  console.log(`Welcome to the File Manager, ${username}!`);
-};
 
 process.on('exit', () => {
   console.log(`Thank you for using File Manager, ${username}, goodbye!`);
@@ -30,26 +18,7 @@ process.on('SIGINT', function () {
 
 const dataInput = (chunk) => {
   const chunkStringified = chunk.toString().trim();
-  const commands = chunkStringified.split(' ');
-  if (commands.length) {
-    let args = commands.slice(1).join(' ');
-    if (args[0] === '"') {
-      commands[1] = args.split('"')[1];
-      args = args.split('"').slice(2).join('"').trim();
-      if (args[0] === '"') {
-        commands[2] = args.split('"')[1];
-      } else {
-        commands[2] = args.split(' ')[0];
-      }
-    } else {
-      args = commands.slice(2).join(' ').trim();
-      if (args[0] === '"') {
-        commands[2] = args.split('"')[1];
-      } else {
-        commands[2] = args.split(' ')[0];
-      }
-    }
-  }
+  const commands = parseCommands(chunkStringified);
 
   switch (commands[0]) {
     case 'up':
@@ -191,7 +160,34 @@ const dataInput = (chunk) => {
           console.log('Operation failed');
         })
         .finally(() => {
-          //console.log('');
+          showDirCur();
+        })
+      break;
+
+    case 'compress':
+      compressFile(dirCur, commands[1], commands[2])
+        .then(() => {
+          console.log('File compressed successfully');
+        })
+        .catch(err => {
+          console.log(err.message);
+          console.log('Operation failed');
+        })
+        .finally(() => {
+          showDirCur();
+        })
+      break;
+
+    case 'decompress':
+      decompressFile(dirCur, commands[1], commands[2])
+        .then(() => {
+          console.log('File decompressed successfully');
+        })
+        .catch(err => {
+          console.log(err.message);
+          console.log('Operation failed');
+        })
+        .finally(() => {
           showDirCur();
         })
       break;
@@ -215,5 +211,5 @@ export function showInvalidInput() {
   console.log('Invalid input');
 }
 
-parseArgs();
+username = parseArgs();
 showDirCur();

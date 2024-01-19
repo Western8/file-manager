@@ -6,8 +6,6 @@ export function goToUpDir(dirCur) {
   let dirCurArr = dirCur.split(path.sep);
   if (dirCurArr.length > 1) {
     dirCur = path.dirname(dirCur);
-    // dirCurArr = dirCurArr.slice(0, -1);
-    // dirCur = dirCurArr.join(path.sep);
   }
   return dirCur;
 }
